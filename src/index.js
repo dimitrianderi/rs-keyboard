@@ -192,6 +192,137 @@ function generateKetboard() {
 }
 
 
+const checkBTN = (button) => {
+    if (button.classList.contains('word')) wordBTN(button);
+    if (button.classList.contains('digit')) digitBTN(button);
+    if (button.classList.contains('backspace')) backspaceBTN();
+    if (button.getAttribute('data-key') === 'Space') spaceBTN();
+    if (button.getAttribute('data-key') === 'Enter') enterBTN();
+    if (button.getAttribute('data-key') === 'CapsLock') capsBTN();
+    if (button.getAttribute('data-key') === 'Tab') tabBTN();
+    if (button.getAttribute('data-key') === 'ShiftLeft' || button.getAttribute('data-key') === 'ShiftRight') shiftBTN();
+    if (button.getAttribute('data-key') === 'AltLeft' || button.getAttribute('data-key') === 'AltRight') altBTN();
+    if (button.getAttribute('data-key') === 'ArrowLeft') arrowLeftBTN();
+    if (button.getAttribute('data-key') === 'ArrowRight') arrowRightBTN();
+    if (button.getAttribute('data-key') === 'ArrowUp') arrowUpBTN();
+    if (button.getAttribute('data-key') === 'ArrowDown') arrowDownBTN();
+    if (button.getAttribute('data-key') === 'Delete') deleteBTN();
+}
+
+const wordBTN = (button) => {
+    let firstChapt = text.slice(0, ind);
+    let secontChapt = text.slice(ind, text.length);
+    text = ((isNoShift && islower) || (!isNoShift && !islower)) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+    ind++;
+    updateKeyboard();
+}
+
+const spaceBTN = () => {
+    text = text.slice(0, ind) + ' ' + text.slice(ind, text.length);
+    ind++;
+    updateKeyboard();
+}
+
+const tabBTN = () => {
+    text = text.slice(0, ind) + '\t' + text.slice(ind, text.length);
+    ind++;
+    updateKeyboard();
+}
+
+const digitBTN = (button) => {
+    let firstChapt = text.slice(0, ind);
+    let secontChapt = text.slice(ind, text.length);
+    text = (isNoShift) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+    ind++;
+    updateKeyboard();
+}
+
+const backspaceBTN = () => {
+    if (ind > 0) text = text.slice(0, ind - 1) + text.slice(ind, text.length);
+    ind = (ind > 0) ? ind - 1 : 0;
+    updateKeyboard();
+}
+
+const deleteBTN = () => {
+    if (ind < text.length) text = text.slice(0, ind) + text.slice(ind + 1, text.length);
+    updateKeyboard();
+}
+
+const enterBTN = () => {
+    text = text.slice(0, ind) + '\n' + text.slice(ind, text.length);
+    ind++;
+    updateKeyboard();
+}
+
+const capsBTN = () => {
+    islower = !islower;
+    for (let el of words) {
+        el.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+    }
+}
+
+const shiftBTN = () => {
+    isNoShift = !isNoShift;
+    let lower = (islower) ? 'lower' : 'upper';
+    let upper = (islower) ? 'upper' : 'lower';
+    for (let el of words) {
+        let keyShift = key[lang][el.getAttribute('data-key')];
+        el.textContent = (isNoShift) ? keyShift[lower] : keyShift[upper];
+    }
+    if (isAlt && !isNoShift) translate();
+    updateKeyboard();
+}
+
+const altBTN = () => {
+    isAlt = !isAlt;
+    if (isAlt && !isNoShift) translate();
+}
+
+const translate = () => {
+    lang = (lang === 'ru') ? 'en' : 'ru';
+    changeLanguage(lang);
+}
+
+const arrowLeftBTN = () => {
+    ind = (ind > 0) ? ind - 1 : 0;
+    updateKeyboard();
+}
+
+const arrowRightBTN = () => {
+    ind = (ind < text.length) ? ind + 1 : text.length;
+    updateKeyboard();
+}
+
+const arrowDownBTN = () => {
+    ind = (text.length > (ind + 85)) ? ind + 85 : text.length;
+    updateKeyboard();
+}
+
+const arrowUpBTN = () => {
+    ind = ((ind - 85) > 0) ? ind - 85 : 0;
+    updateKeyboard();
+}
+
+const changeLanguage = () => {
+    words.forEach(el => {
+        el.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+    })
+
+    titles.forEach(el => {
+        if (!text.length) FOLDER.placeholder = texts[lang].placeholder;
+        el.textContent = texts[lang][el.getAttribute('data-texts')];
+    })
+
+    localStorage.setItem('lang', lang);
+}
+
+const updateKeyboard = () => {
+    if (text.length) FOLDER.placeholder = texts[lang].placeholder;
+    
+    let res = (text.length) ? text.slice(0, ind) + CURSOR + text.slice(ind, text.length) : '';
+    FOLDER.textContent = res;
+}
+
 const key = {
     'en': {
         "Backquote": {
