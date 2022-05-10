@@ -551,6 +551,7 @@ const CURSOR = '|';
 let isAlt = false;
 const BODY = document.querySelector('body');
 let KEYBOARD; let BTN; let words; let FOLDER; let titles;
+const ALPHABET = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz';
 
 const changeLanguage = () => {
   words.forEach((el) => {
@@ -582,7 +583,11 @@ const updateKeyboard = () => {
 const wordBTN = (button) => {
   const firstChapt = text.slice(0, ind);
   const secontChapt = text.slice(ind, text.length);
-  text = ((isNoShift && islower) || (!isNoShift && !islower)) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+  if (ALPHABET.split('').includes(button.textContent.toLowerCase())) {
+    text = ((isNoShift && islower) || (!isNoShift && !islower)) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+  } else {
+    text = (isNoShift) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+  }
   ind += 1;
   updateKeyboard();
 };
@@ -628,18 +633,24 @@ const capsBTN = () => {
   islower = !islower;
   words.forEach((el) => {
     const NAME = el;
-    NAME.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+    if (ALPHABET.split('').includes(NAME.textContent.toLowerCase())) {
+      NAME.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+    }
   });
 };
 
 const shiftBTN = () => {
   isNoShift = !isNoShift;
-  const lower = (islower) ? 'lower' : 'upper';
-  const upper = (islower) ? 'upper' : 'lower';
   words.forEach((el) => {
     const NAME = el;
     const keyShift = key[lang][el.getAttribute('data-key')];
-    NAME.textContent = (isNoShift) ? keyShift[lower] : keyShift[upper];
+    if (ALPHABET.split('').includes(NAME.textContent.toLowerCase())) {
+      const lower = (islower) ? 'lower' : 'upper';
+      const upper = (islower) ? 'upper' : 'lower';
+      NAME.textContent = (isNoShift) ? keyShift[lower] : keyShift[upper];
+    } else {
+      NAME.textContent = (isNoShift) ? keyShift.lower : keyShift.upper;
+    }
   });
   if (isAlt && !isNoShift) translate();
   updateKeyboard();
