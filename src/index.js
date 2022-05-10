@@ -746,15 +746,16 @@ const declaration = () => {
     });
   });
 
-
-
   window.addEventListener('keyup', (e) => {
     BTN.forEach((el) => {
       if (e.code === el.getAttribute('data-key')) {
         el.classList.remove('active');
         if (el.getAttribute('data-key') === 'ShiftRight' || el.getAttribute('data-key') === 'ShiftLeft') {
           shiftBTN();
-          document.querySelectorAll('.shift').forEach(el => el.classList.remove('active'));
+          document.querySelectorAll('.shift').forEach((element) => {
+            const NAME = element;
+            NAME.classList.remove('active');
+          });
           repeat = true;
         }
         if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') altBTN();
