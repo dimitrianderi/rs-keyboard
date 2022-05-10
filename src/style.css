@@ -77,11 +77,24 @@
     align-items: center;
     font-family: 'Times New Roman', serif;
     letter-spacing: 1px;
+    transition: all .1s ease;
 }
 
 .keyboard .btn.active {
-    transform: scale(90%);
-    box-shadow: 0 0 5px black;
+    animation-name: btnClick;
+    animation-duration: .05s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes btnClick {
+    from {
+        transform: scale(100%);
+        box-shadow: 0 0 15px black;
+    }
+    to {
+        transform: scale(90%);
+        box-shadow: 0 0 5px black;
+    }
 }
 
 .keyboard .word,

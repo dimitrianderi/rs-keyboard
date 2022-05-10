@@ -723,6 +723,7 @@ const declaration = () => {
     if (!button) return;
     button.classList.remove('active');
     if (button.getAttribute('data-key') === 'ShiftRight' || button.getAttribute('data-key') === 'ShiftLeft') shiftBTN();
+    if (button.getAttribute('data-key') === 'AltRight' || button.getAttribute('data-key') === 'AltLeft') isAlt = false;
   });
 
   KEYBOARD.addEventListener('mouseout', (e) => {
@@ -730,6 +731,7 @@ const declaration = () => {
     if (!button) return;
     button.classList.remove('active');
     if (!isNoShift && (button.getAttribute('data-key') === 'ShiftRight' || button.getAttribute('data-key') === 'ShiftLeft')) shiftBTN();
+    if (button.getAttribute('data-key') === 'AltRight' || button.getAttribute('data-key') === 'AltLeft') isAlt = false;
   });
 
   window.addEventListener('keydown', (e) => {
@@ -758,7 +760,7 @@ const declaration = () => {
           });
           repeat = true;
         }
-        if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') altBTN();
+        if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') isAlt = false;
       }
     });
   });
