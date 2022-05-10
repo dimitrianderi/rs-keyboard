@@ -550,13 +550,18 @@ let repeat = true;
 const CURSOR = '|';
 let isAlt = false;
 const BODY = document.querySelector('body');
-let KEYBOARD; let BTN; let words; let FOLDER; let titles;
+let KEYBOARD; let BTN; let words; let digits; let FOLDER; let titles;
 const ALPHABET = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz';
 
 const changeLanguage = () => {
   words.forEach((el) => {
     const NAME = el;
     NAME.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+  });
+
+  digits.forEach((el) => {
+    const NAME = el.lastChild;
+    NAME.textContent = key[lang][el.getAttribute('data-key')].upper;
   });
 
   titles.forEach((el) => {
@@ -702,6 +707,7 @@ const declaration = () => {
   KEYBOARD = document.querySelector('.keyboard');
   BTN = document.querySelectorAll('.btn');
   words = document.querySelectorAll('.word');
+  digits = document.querySelectorAll('.digit');
   FOLDER = document.querySelector('.folder');
   titles = document.querySelectorAll('[data-texts]');
 
