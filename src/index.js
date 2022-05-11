@@ -812,7 +812,7 @@ const declaration = () => {
     FOLDER.setSelectionRange(ind, ind);
   });
 
-  FOLDER.addEventListener('keydown', function (e) {
+  FOLDER.addEventListener('keydown', function pushKeyDown(e) {
     if (!(e.code === 'F5' || e.code === 'F12' || e.code === 'ControlLeft')) {
       e.preventDefault();
       this.focus();
