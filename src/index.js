@@ -660,6 +660,7 @@ const shiftBTN = () => {
 };
 
 const altBTN = () => {
+  isAlt = true;
   if (isAlt && !isNoShift) translate();
 };
 
@@ -806,8 +807,6 @@ const declaration = () => {
         if (el.getAttribute('data-key') === 'ShiftRight' || el.getAttribute('data-key') === 'ShiftLeft') {
           if (repeat) checkBTN(el);
           repeat = false;
-        } else if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') {
-          isAlt = true;
         } else {
           checkBTN(el);
         }
