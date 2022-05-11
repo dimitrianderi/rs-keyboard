@@ -685,29 +685,34 @@ const arrowRightBTN = () => {
 };
 
 const arrowDownBTN = () => {
-  const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
-    ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
-    : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
+  if ((FOLDER.textContent.indexOf('\n', FOLDER.selectionEnd) - FOLDER.selectionEnd) > 92 || (FOLDER.textContent.indexOf('\n', FOLDER.selectionEnd) - FOLDER.selectionEnd) < 0) {
+    FOLDER.selectionEnd += 92;
+    FOLDER.selectionStart += 92;
+  } else {
+    const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
+      ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
+      : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
 
-  const currentIndexCursorInRow = (lastN > 0)
-    ? FOLDER.selectionEnd - lastN
-    : FOLDER.selectionEnd + 1;
+    const currentIndexCursorInRow = (lastN > 0)
+      ? FOLDER.selectionEnd - lastN
+      : FOLDER.selectionEnd + 1;
 
-  const nextN = FOLDER.textContent.indexOf('\n', FOLDER.selectionEnd);
+    const nextN = FOLDER.textContent.indexOf('\n', FOLDER.selectionEnd);
 
-  let lengthOfDownRow;
+    let lengthOfDownRow;
 
-  if (nextN > 0) {
-    lengthOfDownRow = (FOLDER.textContent.indexOf('\n', nextN + 1) > 0)
-      ? FOLDER.textContent.indexOf('\n', nextN + 1) - nextN
-      : FOLDER.textContent.length;
+    if (nextN > 0) {
+      lengthOfDownRow = (FOLDER.textContent.indexOf('\n', nextN + 1) > 0)
+        ? FOLDER.textContent.indexOf('\n', nextN + 1) - nextN
+        : FOLDER.textContent.length;
 
-    if (currentIndexCursorInRow > lengthOfDownRow) {
-      FOLDER.selectionEnd = lengthOfDownRow;
-      FOLDER.selectionStart = lengthOfDownRow;
-    } else {
-      FOLDER.selectionEnd = currentIndexCursorInRow + nextN;
-      FOLDER.selectionStart = currentIndexCursorInRow + nextN;
+      if (currentIndexCursorInRow > lengthOfDownRow) {
+        FOLDER.selectionEnd = lengthOfDownRow;
+        FOLDER.selectionStart = lengthOfDownRow;
+      } else {
+        FOLDER.selectionEnd = currentIndexCursorInRow + nextN;
+        FOLDER.selectionStart = currentIndexCursorInRow + nextN;
+      }
     }
   }
 
@@ -715,27 +720,31 @@ const arrowDownBTN = () => {
 };
 
 const arrowUpBTN = () => {
-  const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
-    ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
-    : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
+  if ((FOLDER.selectionEnd - FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd)) > 92) {
+    FOLDER.selectionEnd -= 92;
+  } else {
+    const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
+      ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
+      : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
 
-  const currentIndexCursorInRow = (lastN > 0)
-    ? FOLDER.selectionEnd - lastN
-    : FOLDER.selectionEnd + 1;
+    const currentIndexCursorInRow = (lastN > 0)
+      ? FOLDER.selectionEnd - lastN
+      : FOLDER.selectionEnd + 1;
 
-  let lengthOfUpRow;
+    let lengthOfUpRow;
 
-  if (lastN > 0) {
-    lengthOfUpRow = (FOLDER.textContent.lastIndexOf('\n', lastN - 1) > 0)
-      ? (lastN - FOLDER.textContent.lastIndexOf('\n', lastN - 1))
-      : lastN + 1;
+    if (lastN > 0) {
+      lengthOfUpRow = (FOLDER.textContent.lastIndexOf('\n', lastN - 1) > 0)
+        ? (lastN - FOLDER.textContent.lastIndexOf('\n', lastN - 1))
+        : lastN + 1;
 
-    if (currentIndexCursorInRow > lengthOfUpRow) {
-      FOLDER.selectionEnd = lastN;
-      FOLDER.selectionStart = lastN;
-    } else {
-      FOLDER.selectionEnd = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
-      FOLDER.selectionStart = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
+      if (currentIndexCursorInRow > lengthOfUpRow) {
+        FOLDER.selectionEnd = lastN;
+        FOLDER.selectionStart = lastN;
+      } else {
+        FOLDER.selectionEnd = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
+        FOLDER.selectionStart = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
+      }
     }
   }
 
