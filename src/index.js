@@ -543,11 +543,10 @@ const texts = {
 
 let text = '';
 let lang = 'en';
-let ind = 0;
+let ind;
 let islower = true;
 let isNoShift = true;
 let repeat = true;
-const CURSOR = '|';
 let isAlt = false;
 const BODY = document.querySelector('body');
 let KEYBOARD; let BTN; let words; let digits; let FOLDER; let titles;
@@ -580,9 +579,10 @@ const translate = () => {
 
 const updateKeyboard = () => {
   if (text.length) FOLDER.placeholder = texts[lang].placeholder;
-
-  const res = (text.length) ? text.slice(0, ind) + CURSOR + text.slice(ind, text.length) : '';
-  FOLDER.textContent = res;
+  FOLDER.textContent = text;
+  // ind = FOLDER.selectionStart;
+  FOLDER.focus();
+  FOLDER.setSelectionRange(ind, ind);
 };
 
 const wordBTN = (button) => {
@@ -667,23 +667,79 @@ const altBTN = () => {
 };
 
 const arrowLeftBTN = () => {
-  ind = (ind > 0) ? ind - 1 : 0;
-  updateKeyboard();
+  if (ind) {
+    FOLDER.selectionEnd = ind - 1;
+    FOLDER.selectionStart = ind - 1;
+  }
+  ind = FOLDER.selectionStart;
+  FOLDER.setSelectionRange(ind, ind);
 };
 
 const arrowRightBTN = () => {
-  ind = (ind < text.length) ? ind + 1 : text.length;
-  updateKeyboard();
+  if (ind < text.length) {
+    FOLDER.selectionEnd = ind + 1;
+    FOLDER.selectionStart = ind + 1;
+  }
+  ind = FOLDER.selectionStart;
+  FOLDER.setSelectionRange(ind, ind);
 };
 
 const arrowDownBTN = () => {
-  ind = (text.length > (ind + 85)) ? ind + 85 : text.length;
-  updateKeyboard();
+  const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
+    ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
+    : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
+
+  const currentIndexCursorInRow = (lastN > 0)
+    ? FOLDER.selectionEnd - lastN
+    : FOLDER.selectionEnd + 1;
+
+  const nextN = FOLDER.textContent.indexOf('\n', FOLDER.selectionEnd);
+
+  let lengthOfDownRow;
+
+  if (nextN > 0) {
+    lengthOfDownRow = (FOLDER.textContent.indexOf('\n', nextN + 1) > 0)
+      ? FOLDER.textContent.indexOf('\n', nextN + 1) - nextN
+      : FOLDER.textContent.length;
+
+    if (currentIndexCursorInRow > lengthOfDownRow) {
+      FOLDER.selectionEnd = lengthOfDownRow;
+      FOLDER.selectionStart = lengthOfDownRow;
+    } else {
+      FOLDER.selectionEnd = currentIndexCursorInRow + nextN;
+      FOLDER.selectionStart = currentIndexCursorInRow + nextN;
+    }
+  }
+
+  ind = FOLDER.selectionStart;
 };
 
 const arrowUpBTN = () => {
-  ind = ((ind - 85) > 0) ? ind - 85 : 0;
-  updateKeyboard();
+  const lastN = (FOLDER.textContent[FOLDER.selectionEnd] === '\n')
+    ? FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd - 1)
+    : FOLDER.textContent.lastIndexOf('\n', FOLDER.selectionEnd);
+
+  const currentIndexCursorInRow = (lastN > 0)
+    ? FOLDER.selectionEnd - lastN
+    : FOLDER.selectionEnd + 1;
+
+  let lengthOfUpRow;
+
+  if (lastN > 0) {
+    lengthOfUpRow = (FOLDER.textContent.lastIndexOf('\n', lastN - 1) > 0)
+      ? (lastN - FOLDER.textContent.lastIndexOf('\n', lastN - 1))
+      : lastN + 1;
+
+    if (currentIndexCursorInRow > lengthOfUpRow) {
+      FOLDER.selectionEnd = lastN;
+      FOLDER.selectionStart = lastN;
+    } else {
+      FOLDER.selectionEnd = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
+      FOLDER.selectionStart = (lastN - (lengthOfUpRow - currentIndexCursorInRow));
+    }
+  }
+
+  ind = FOLDER.selectionStart;
 };
 
 const checkBTN = (button) => {
@@ -710,6 +766,9 @@ const declaration = () => {
   digits = document.querySelectorAll('.digit');
   FOLDER = document.querySelector('.folder');
   titles = document.querySelectorAll('[data-texts]');
+  ind = FOLDER.selectionStart;
+
+  FOLDER.focus();
 
   KEYBOARD.addEventListener('mousedown', (e) => {
     const button = e.target.closest('.btn');
@@ -748,6 +807,18 @@ const declaration = () => {
     });
   });
 
+  window.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    FOLDER.setSelectionRange(ind, ind);
+  });
+
+  FOLDER.addEventListener('keydown', function (e) {
+    if (!(e.code === 'F5' || e.code === 'F12' || e.code === 'ControlLeft')) {
+      e.preventDefault();
+      this.focus();
+    }
+  });
+
   window.addEventListener('keyup', (e) => {
     BTN.forEach((el) => {
       if (e.code === el.getAttribute('data-key')) {
@@ -760,7 +831,7 @@ const declaration = () => {
           });
           repeat = true;
         }
-        if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') isAlt = false;
+        if (el.getAttribute('data-key') === 'AltRight') isAlt = false;
       }
     });
   });
@@ -788,8 +859,9 @@ function generateKetboard() {
   textarea.classList.add('folder');
   textarea.placeholder = texts[lang].placeholder;
 
-  textarea.setAttribute('readonly', true);
   textarea.setAttribute('cols', 90);
+  // textarea.setAttribute('readonly', '');
+  textarea.focus();
   container.appendChild(textarea);
 
   const keyboard = document.createElement('div');
