@@ -582,7 +582,6 @@ const updateKeyboard = () => {
   FOLDER.textContent = text;
   FOLDER.focus();
   FOLDER.setSelectionRange(ind, ind);
-  console.log(isAlt)
 };
 
 const wordBTN = (button) => {
@@ -658,11 +657,9 @@ const shiftBTN = () => {
     }
   });
   if (isAlt && !isNoShift) translate();
-  updateKeyboard();
 };
 
 const altBTN = () => {
-  isAlt = !isAlt;
   if (isAlt && !isNoShift) translate();
 };
 
@@ -809,6 +806,8 @@ const declaration = () => {
         if (el.getAttribute('data-key') === 'ShiftRight' || el.getAttribute('data-key') === 'ShiftLeft') {
           if (repeat) checkBTN(el);
           repeat = false;
+        } else if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') {
+          isAlt = true;
         } else {
           checkBTN(el);
         }
@@ -821,12 +820,15 @@ const declaration = () => {
     FOLDER.setSelectionRange(ind, ind);
   });
 
-  // FOLDER.addEventListener('keydown', function pushKeyDown(e) {
-  //   if (!(e.code === 'F5' || e.code === 'F12' || e.code === 'ControlLeft' || e.code === 'ShiftRight' || e.code === 'AltRight' || e.code === 'ShiftLeft' || e.code === 'AltLeft')) {
-  //     e.preventDefault();
-  //     this.focus();
-  //   }
-  // });
+  FOLDER.addEventListener('keydown', function pushKeyDown(e) {
+    if (!(e.code === 'F5'
+      || e.code === 'F12'
+      || e.code === 'ControlLeft'
+      || e.code === 'CapsLock')) {
+      e.preventDefault();
+      this.focus();
+    }
+  });
 
   window.addEventListener('keyup', (e) => {
     BTN.forEach((el) => {
@@ -840,7 +842,7 @@ const declaration = () => {
           });
           repeat = true;
         }
-        if (el.getAttribute('data-key') === 'AltRight') isAlt = false;
+        if (el.getAttribute('data-key') === 'AltRight' || el.getAttribute('data-key') === 'AltLeft') isAlt = false;
       }
     });
   });
