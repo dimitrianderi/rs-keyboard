@@ -580,9 +580,9 @@ const translate = () => {
 const updateKeyboard = () => {
   if (text.length) FOLDER.placeholder = texts[lang].placeholder;
   FOLDER.textContent = text;
-  // ind = FOLDER.selectionStart;
   FOLDER.focus();
   FOLDER.setSelectionRange(ind, ind);
+  console.log(isAlt)
 };
 
 const wordBTN = (button) => {
@@ -821,12 +821,12 @@ const declaration = () => {
     FOLDER.setSelectionRange(ind, ind);
   });
 
-  FOLDER.addEventListener('keydown', function pushKeyDown(e) {
-    if (!(e.code === 'F5' || e.code === 'F12' || e.code === 'ControlLeft')) {
-      e.preventDefault();
-      this.focus();
-    }
-  });
+  // FOLDER.addEventListener('keydown', function pushKeyDown(e) {
+  //   if (!(e.code === 'F5' || e.code === 'F12' || e.code === 'ControlLeft' || e.code === 'ShiftRight' || e.code === 'AltRight' || e.code === 'ShiftLeft' || e.code === 'AltLeft')) {
+  //     e.preventDefault();
+  //     this.focus();
+  //   }
+  // });
 
   window.addEventListener('keyup', (e) => {
     BTN.forEach((el) => {
