@@ -528,6 +528,22 @@ const key = {
   },
 };
 
+class GenerateDate {
+  constructor(option) {
+    this.lang = option.language;
+    this.text = option.text;
+    this.islower = option.islower;
+    this.ind = option.ind;
+  }
+}
+
+let data = new GenerateDate({
+  language: 'en',
+  text: '',
+  islower: true,
+  ind: 0,
+});
+
 const texts = {
   en: {
     h1: 'RS Virtual Keyboard',
@@ -541,10 +557,7 @@ const texts = {
   },
 };
 
-let text = '';
-let lang = 'en';
 let ind;
-let islower = true;
 let isNoShift = true;
 let repeat = true;
 let isAlt = false;
@@ -555,102 +568,107 @@ const ALPHABET = 'абвгдеёжзийклмнопрстуфхцчшщъыьэ
 const changeLanguage = () => {
   words.forEach((el) => {
     const NAME = el;
-    NAME.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+    NAME.textContent = (data.islower) ? key[data.lang][el.getAttribute('data-key')].lower : key[data.lang][el.getAttribute('data-key')].upper;
   });
 
   digits.forEach((el) => {
     const NAME = el.lastChild;
-    NAME.textContent = key[lang][el.getAttribute('data-key')].upper;
+    NAME.textContent = key[data.lang][el.getAttribute('data-key')].upper;
   });
 
   titles.forEach((el) => {
     const NAME = el;
-    if (!text.length) FOLDER.placeholder = texts[lang].placeholder;
-    NAME.textContent = texts[lang][el.getAttribute('data-texts')];
+    if (!data.text.length) FOLDER.placeholder = texts[data.lang].placeholder;
+    NAME.textContent = texts[data.lang][el.getAttribute('data-texts')];
   });
 
-  localStorage.setItem('lang', lang);
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const translate = () => {
-  lang = (lang === 'ru') ? 'en' : 'ru';
-  changeLanguage(lang);
+  data.lang = (data.lang === 'ru') ? 'en' : 'ru';
+  changeLanguage(data.lang);
 };
 
 const updateKeyboard = () => {
-  if (text.length) FOLDER.placeholder = texts[lang].placeholder;
-  FOLDER.textContent = text;
+  if (data.text.length) FOLDER.placeholder = texts[data.lang].placeholder;
+  FOLDER.textContent = data.text;
   FOLDER.focus();
   FOLDER.setSelectionRange(ind, ind);
+  data.ind = ind;
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const wordBTN = (button) => {
-  const firstChapt = text.slice(0, ind);
-  const secontChapt = text.slice(ind, text.length);
+  const firstChapt = data.text.slice(0, ind);
+  const secontChapt = data.text.slice(ind, data.text.length);
   if (ALPHABET.split('').includes(button.textContent.toLowerCase())) {
-    text = ((isNoShift && islower) || (!isNoShift && !islower)) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+    data.text = ((isNoShift && data.islower) || (!isNoShift && !data.islower)) ? firstChapt + key[data.lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[data.lang][button.getAttribute('data-key')].upper + secontChapt;
   } else {
-    text = (isNoShift) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+    data.text = (isNoShift) ? firstChapt + key[data.lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[data.lang][button.getAttribute('data-key')].upper + secontChapt;
   }
   ind += 1;
   updateKeyboard();
 };
 
 const spaceBTN = () => {
-  text = `${text.slice(0, ind)} ${text.slice(ind, text.length)}`;
+  data.text = `${data.text.slice(0, ind)} ${data.text.slice(ind, data.text.length)}`;
   ind += 1;
   updateKeyboard();
 };
 
 const tabBTN = () => {
-  text = `${text.slice(0, ind)}\t${text.slice(ind, text.length)}`;
+  data.text = `${data.text.slice(0, ind)}\t${data.text.slice(ind, data.text.length)}`;
   ind += 1;
   updateKeyboard();
 };
 
 const digitBTN = (button) => {
-  const firstChapt = text.slice(0, ind);
-  const secontChapt = text.slice(ind, text.length);
-  text = (isNoShift) ? firstChapt + key[lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[lang][button.getAttribute('data-key')].upper + secontChapt;
+  const firstChapt = data.text.slice(0, ind);
+  const secontChapt = data.text.slice(ind, data.text.length);
+  data.text = (isNoShift) ? firstChapt + key[data.lang][button.getAttribute('data-key')].lower + secontChapt : firstChapt + key[data.lang][button.getAttribute('data-key')].upper + secontChapt;
   ind += 1;
   updateKeyboard();
 };
 
 const backspaceBTN = () => {
-  if (ind > 0) text = text.slice(0, ind - 1) + text.slice(ind, text.length);
+  if (ind > 0) data.text = data.text.slice(0, ind - 1) + data.text.slice(ind, data.text.length);
   ind = (ind > 0) ? ind - 1 : 0;
   updateKeyboard();
 };
 
 const deleteBTN = () => {
-  if (ind < text.length) text = text.slice(0, ind) + text.slice(ind + 1, text.length);
+  if (ind < data.text.length) {
+    data.text = data.text.slice(0, ind) + data.text.slice(ind + 1, data.text.length);
+  }
   updateKeyboard();
 };
 
 const enterBTN = () => {
-  text = `${text.slice(0, ind)}\n${text.slice(ind, text.length)}`;
+  data.text = `${data.text.slice(0, ind)}\n${data.text.slice(ind, data.text.length)}`;
   ind += 1;
   updateKeyboard();
 };
 
 const capsBTN = () => {
-  islower = !islower;
+  data.islower = !data.islower;
   words.forEach((el) => {
     const NAME = el;
     if (ALPHABET.split('').includes(NAME.textContent.toLowerCase())) {
-      NAME.textContent = (islower) ? key[lang][el.getAttribute('data-key')].lower : key[lang][el.getAttribute('data-key')].upper;
+      NAME.textContent = (data.islower) ? key[data.lang][el.getAttribute('data-key')].lower : key[data.lang][el.getAttribute('data-key')].upper;
     }
   });
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const shiftBTN = () => {
   isNoShift = !isNoShift;
   words.forEach((el) => {
     const NAME = el;
-    const keyShift = key[lang][el.getAttribute('data-key')];
+    const keyShift = key[data.lang][el.getAttribute('data-key')];
     if (ALPHABET.split('').includes(NAME.textContent.toLowerCase())) {
-      const lower = (islower) ? 'lower' : 'upper';
-      const upper = (islower) ? 'upper' : 'lower';
+      const lower = (data.islower) ? 'lower' : 'upper';
+      const upper = (data.islower) ? 'upper' : 'lower';
       NAME.textContent = (isNoShift) ? keyShift[lower] : keyShift[upper];
     } else {
       NAME.textContent = (isNoShift) ? keyShift.lower : keyShift.upper;
@@ -671,15 +689,17 @@ const arrowLeftBTN = () => {
   }
   ind = FOLDER.selectionStart;
   FOLDER.setSelectionRange(ind, ind);
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const arrowRightBTN = () => {
-  if (ind < text.length) {
+  if (ind < data.text.length) {
     FOLDER.selectionEnd = ind + 1;
     FOLDER.selectionStart = ind + 1;
   }
   ind = FOLDER.selectionStart;
   FOLDER.setSelectionRange(ind, ind);
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const arrowDownBTN = () => {
@@ -715,6 +735,7 @@ const arrowDownBTN = () => {
   }
 
   ind = FOLDER.selectionStart;
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const arrowUpBTN = () => {
@@ -747,6 +768,7 @@ const arrowUpBTN = () => {
   }
 
   ind = FOLDER.selectionStart;
+  localStorage.setItem('data', JSON.stringify(data));
 };
 
 const checkBTN = (button) => {
@@ -848,29 +870,29 @@ const declaration = () => {
 };
 
 function generateKetboard() {
-  lang = (localStorage.getItem('lang')) ? localStorage.getItem('lang') : lang;
+  data = (localStorage.getItem('data')) ? JSON.parse(localStorage.getItem('data')) : data;
   const container = document.createElement('div');
   container.classList.add('container');
   BODY.appendChild(container);
 
   const h1 = document.createElement('h1');
   h1.classList.add('title');
-  h1.textContent = texts[lang].h1;
+  h1.textContent = texts[data.lang].h1;
   h1.setAttribute('data-texts', 'h1');
   container.appendChild(h1);
 
   const h2 = document.createElement('h2');
   h2.classList.add('description');
-  h2.textContent = texts[lang].h2;
+  h2.textContent = texts[data.lang].h2;
   h2.setAttribute('data-texts', 'h2');
   container.appendChild(h2);
 
   const textarea = document.createElement('textarea');
   textarea.classList.add('folder');
-  textarea.placeholder = texts[lang].placeholder;
+  textarea.placeholder = texts[data.lang].placeholder;
 
   textarea.setAttribute('cols', 90);
-  // textarea.setAttribute('readonly', '');
+  textarea.textContent = data.text;
   textarea.focus();
   container.appendChild(textarea);
 
@@ -887,7 +909,7 @@ function generateKetboard() {
     const div = document.createElement('div');
     div.setAttribute('data-key', arr1[i]);
     div.classList.add('btn');
-    div.textContent = key[lang][arr1[i]].lower;
+    div.textContent = key[data.lang][arr1[i]].lower;
     if (i !== 13 && i !== 0) {
       div.classList.add('digit');
       const span = document.createElement('div');
@@ -911,7 +933,7 @@ function generateKetboard() {
   for (let i = 0; i < 15; i += 1) {
     const div = document.createElement('div');
     div.setAttribute('data-key', arr2[i]);
-    div.textContent = key[lang][arr2[i]].lower;
+    div.textContent = key[data.lang][arr2[i]].lower;
     div.classList.add('btn');
     if (i === 0) div.classList.add('shift');
     if (i > 0 && i < 14) div.classList.add('word');
@@ -926,7 +948,7 @@ function generateKetboard() {
   for (let i = 0; i < 13; i += 1) {
     const div = document.createElement('div');
     div.setAttribute('data-key', arr3[i]);
-    div.textContent = key[lang][arr3[i]].lower;
+    div.textContent = key[data.lang][arr3[i]].lower;
     div.classList.add('btn');
     if (i === 0 || i === 12) div.classList.add('long');
     if (i > 0 && i < 12) div.classList.add('word');
@@ -941,7 +963,7 @@ function generateKetboard() {
   for (let i = 0; i < 14; i += 1) {
     const div = document.createElement('div');
     div.setAttribute('data-key', arr4[i]);
-    div.textContent = key[lang][arr4[i]].lower;
+    div.textContent = key[data.lang][arr4[i]].lower;
     div.classList.add('btn');
     if (i === 0 || i === 13) div.classList.add('shift');
     if (i > 0 && i < 12) div.classList.add('word');
@@ -956,11 +978,21 @@ function generateKetboard() {
   for (let i = 0; i < 9; i += 1) {
     const div = document.createElement('div');
     div.setAttribute('data-key', arr5[i]);
-    div.textContent = key[lang][arr5[i]].lower;
+    div.textContent = key[data.lang][arr5[i]].lower;
     div.classList.add('btn');
     if (i === 3) div.classList.add('space');
     row5.appendChild(div);
   }
+
+  document.querySelectorAll('.word').forEach((el) => {
+    const NAME = el;
+    if (ALPHABET.split('').includes(NAME.textContent.toLowerCase())) {
+      NAME.textContent = (data.islower) ? key[data.lang][el.getAttribute('data-key')].lower : key[data.lang][el.getAttribute('data-key')].upper;
+    }
+  });
+
+  ind = data.ind;
+  document.querySelector('.folder').selectionStart = ind;
 
   declaration();
 }
