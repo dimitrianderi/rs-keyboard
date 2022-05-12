@@ -1,0 +1,128 @@
+.container {
+    width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+}
+
+.title {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    cursor: default;
+}
+
+.description {
+    text-align: center;
+    font-size: 15px;
+    color: gray;
+    cursor: default;
+}
+
+.folder {
+    resize: none;
+    width: 900px;
+    border: none;
+    outline: none;
+    border: 1px solid gray;
+    transition: all .2s ease;
+    height: 150px;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: default;
+    font-size: 18px;
+    pointer-events: none;
+    user-select: none;
+    text-align: justify;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.folder:focus {
+    border: 1px solid black;
+}
+
+.keyboard {
+    margin-top: 25px;
+    width: 960px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.keyboard .row {
+    display: flex;
+    gap: 15px;
+}
+
+.keyboard .btn {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background: black;
+    border: 2px solid white;
+    box-shadow: 0 0 15px black;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 1px;
+    transition: all .1s ease;
+}
+
+.keyboard .btn.active {
+    animation-name: btnClick;
+    animation-duration: .05s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes btnClick {
+    from {
+        transform: scale(100%);
+        box-shadow: 0 0 15px black;
+    }
+    to {
+        transform: scale(90%);
+        box-shadow: 0 0 5px black;
+    }
+}
+
+.keyboard .word,
+.keyboard .digit {
+    background: brown;
+}
+
+.keyboard .long {
+    width: 110px;
+}
+
+.keyboard .shift {
+    width: 70px;
+}
+
+.keyboard .space {
+    width: 460px;
+    background: brown;
+}
+
+.keyboard .btn:focus {
+    transform: scale(90%);
+}
+
+.symbol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    font-size: 12px;
+}
